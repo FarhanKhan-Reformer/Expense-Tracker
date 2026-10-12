@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!--
+  index.html -- the STRUCTURE of the Expense Tracker.
+  It only says WHAT is on the page. The looks are in style.css,
+  and the behaviour is in script.js.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ExpenseFlow - Personal Expense Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="sidebar">
+      <div class="brand"><span class="logo">&#128176;</span> ExpenseFlow</div>
+
+      <nav class="nav">
+        <a href="#dashboard" class="nav-link active">&#128202; Dashboard</a>
+        <a href="#add" class="nav-link">&#10133; Add Transaction</a>
+        <a href="#reports" class="nav-link">&#128200; Reports</a>
+        <a href="#history" class="nav-link">&#129534; History</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn ghost block" id="resetDemoBtn">&#128260; Reset Demo Data</button>
+        <button class="btn danger block" id="clearAllBtn">&#128465;&#65039; Clear All Data</button>
+        <p class="sidebar-note">
+          &#128190; Your data is saved in <strong>this browser only</strong>
+          (using localStorage). It will not appear on other devices or browsers.
+        </p>
+      </div>
+    </aside>
+
+    <!-- ===================== MAIN AREA ===================== -->
+    <main class="main">
+
+      <!-- Top bar -->
+      <header class="topbar">
+        <div>
+          <h1>Dashboard</h1>
+          <p class="muted">Track your income and expenses in Pakistani Rupees (PKR).</p>
+        </div>
+        <button class="btn primary" id="exportBtn">&#11015;&#65039; Export CSV</button>
+      </header>
+
+      <!-- ---------- Summary cards ---------- -->
+      <section class="section" id="dashboard">
+        <div class="cards">
+          <div class="card income">
+            <div class="card-icon">&#128181;</div>
+            <div class="card-label">Total Income</div>
+            <div class="card-value" id="summaryIncome">Rs 0.00</div>
+            <div class="card-sub" id="incomeCount">0 transactions</div>
+          </div>
+
+          <div class="card expense">
+            <div class="card-icon">&#128179;</div>
+            <div class="card-label">Total Expenses</div>
+            <div class="card-value" id="summaryExpense">Rs 0.00</div>
+            <div class="card-sub" id="expenseCount">0 transactions</div>
+          </div>
+
+          <div class="card balance" id="balanceCard">
+            <div class="card-icon">&#127974;</div>
+            <div class="card-label">Current Balance</div>
+            <div class="card-value" id="summaryBalance">Rs 0.00</div>
+            <div class="card-sub" id="balanceNote">&mdash;</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- Add transaction form ---------- -->
+      <section class="section" id="add">
+        <h2>&#10133; Add Transaction</h2>
+        <div class="panel">
+          <form id="txForm" novalidate>
+            <div class="form-grid">
+
+              <div class="field full">
+                <label>Transaction Type</label>
+                <div class="segmented">
+                  <input type="radio" id="typeExpense" name="type" value="expense" checked />
+                  <label for="typeExpense">&#128179; Expense</label>
+                  <input type="radio" id="typeIncome" name="type" value="income" />
+                  <label for="typeIncome">&#128181; Income</label>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="amountInput">Amount (PKR)</label>
+                <input type="number" id="amountInput" placeholder="e.g. 5000" min="0" step="0.01" />
+                <span class="error" id="errorAmount"></span>
+              </div>
+
+              <div class="field">
+                <label for="dateInput">Date</label>
+                <input type="date" id="dateInput" />
+                <span class="error" id="errorDate"></span>
+              </div>
+
+              <div class="field">
+                <label for="descriptionInput">Description</label>
+                <input type="text" id="descriptionInput" placeholder="e.g. Grocery shopping" maxlength="60" />
+                <span class="error" id="errorDescription"></span>
+              </div>
+
+              <div class="field">
+                <label for="categorySelect">Category</label>
+                <select id="categorySelect"></select>
+                <span class="error" id="errorCategory"></span>
+              </div>
+
+              <div class="field full">
+                <button type="submit" class="btn primary block">Add Transaction</button>
+              </div>
+
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ---------- Reports (chart + monthly summary) ---------- -->
+      <section class="section" id="reports">
+        <h2>&#128200; Reports</h2>
+        <div class="grid-2">
+          <div class="panel">
+            <h3 class="panel-title">Expenses by Category</h3>
+            <div id="chartEl"></div>
+          </div>
+          <div class="panel">
+            <h3 class="panel-title">Monthly Summary</h3>
+            <div id="monthlyEl"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- Transaction history ---------- -->
+      <section class="section" id="history">
+        <h2>&#129534; Transaction History</h2>
+
+        <div class="filters">
+          <input type="text" id="searchInput" placeholder="&#128269; Search description..." />
+          <select id="filterCategory"></select>
+          <select id="filterType">
+            <option value="all">All types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+          <select id="filterMonth"></select>
+        </div>
+
+        <div class="table-wrap">
+          <table class="tx-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th class="num">Amount</th>
+                <th>Type</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="table-info" id="tableInfo"></p>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Small pop-up message shown after actions -->
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
